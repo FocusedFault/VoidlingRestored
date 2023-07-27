@@ -1,8 +1,10 @@
 using BepInEx;
 using RoR2;
 using EntityStates.VoidRaidCrab;
+using EntityStates.VoidRaidCrab.Weapon;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.AddressableAssets;
 
 namespace VoidlingRestored
@@ -20,11 +22,42 @@ namespace VoidlingRestored
 
     public void Awake()
     {
+      // Charge gauntlet first Charge gauntlet again, 
+      // Does abilities on pips
       voidling.GetComponent<ModelLocator>().modelTransform.gameObject.AddComponent<PrintController>();
+      On.RoR2.Stage.Start += Stage_Start;
       On.EntityStates.VoidRaidCrab.SpawnState.OnEnter += VoidRaidCrab_SpawnState;
       On.EntityStates.VoidRaidCrab.Collapse.OnEnter += Collapse_OnEnter;
       On.EntityStates.VoidRaidCrab.ReEmerge.OnEnter += ReEmerge_OnEnter;
-      On.RoR2.Stage.Start += Stage_Start;
+      On.EntityStates.VoidRaidCrab.ChargeGauntlet.OnEnter += ChargeGauntlet_OnEnter;
+      On.EntityStates.VoidRaidCrab.ChargeWardWipe.OnEnter += ChargeWardWipe_OnEnter;
+      On.EntityStates.VoidRaidCrab.ChargeFinalStand.OnEnter += ChargeFinalStand_OnEnter;
+    }
+
+    private void ChargeGauntlet_OnEnter(On.EntityStates.VoidRaidCrab.ChargeGauntlet.orig_OnEnter orig, ChargeGauntlet self)
+    {
+      self.outer.SetState(new ChargeWardWipe());
+    }
+
+    private void ChargeWardWipe_OnEnter(On.EntityStates.VoidRaidCrab.ChargeWardWipe.orig_OnEnter orig, ChargeWardWipe self)
+    {
+      orig(self);
+      PhasedInventorySetter component1 = self.GetComponent<PhasedInventorySetter>();
+      if ((bool)(Object)component1 && NetworkServer.active)
+        component1.AdvancePhase();
+      ChargeGauntlet gauntlet = new ChargeGauntlet();
+      if (!(bool)(Object)gauntlet.nextSkillDef)
+        return;
+      GenericSkill skillByDef = self.skillLocator.FindSkillByDef(gauntlet.skillDefToReplaceAtStocksEmpty);
+      if (!(bool)(Object)skillByDef || skillByDef.stock != 0)
+        return;
+      skillByDef.SetBaseSkill(gauntlet.nextSkillDef);
+    }
+
+    private void ChargeFinalStand_OnEnter(On.EntityStates.VoidRaidCrab.ChargeFinalStand.orig_OnEnter orig, ChargeFinalStand self)
+    {
+      Debug.LogWarning("Im in charge final stand");
+      orig(self);
     }
 
     private void Collapse_OnEnter(On.EntityStates.VoidRaidCrab.Collapse.orig_OnEnter orig, Collapse self)
@@ -48,6 +81,12 @@ namespace VoidlingRestored
       if (self.sceneDef.cachedName == "voidraid")
       {
         GameObject phases = GameObject.Find("EncounterPhases");
+        VoidRaidGauntletController controller = Object.FindObjectOfType<VoidRaidGauntletController>();
+        if (controller)
+        {
+          Debug.LogWarning("i have been found");
+          Debug.LogWarning(controller.gameObject.name);
+        }
         Transform cam = GameObject.Find("RaidVoid").transform.GetChild(8);
         if (phases)
         {
