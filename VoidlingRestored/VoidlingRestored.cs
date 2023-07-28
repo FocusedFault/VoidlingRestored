@@ -1,6 +1,7 @@
 using BepInEx;
 using RoR2;
 using RoR2.VoidRaidCrab;
+using R2API;
 using EntityStates.VoidRaidCrab;
 using System.Linq;
 using UnityEngine;
@@ -25,6 +26,7 @@ namespace VoidlingRestored
     public void Awake()
     {
       voidling.GetComponent<ModelLocator>().modelTransform.gameObject.AddComponent<PrintController>();
+      AddContent();
       On.RoR2.Stage.Start += Stage_Start;
       On.RoR2.CharacterMaster.OnBodyStart += CharacterMaster_OnBodyStart;
       On.EntityStates.VoidRaidCrab.SpawnState.OnEnter += VoidRaidCrab_SpawnState;
@@ -36,6 +38,13 @@ namespace VoidlingRestored
       On.EntityStates.VoidRaidCrab.ChargeFinalStand.OnEnter += ChargeFinalStand_OnEnter;
       On.EntityStates.VoidRaidCrab.DeathState.OnEnter += DeathState_OnEnter;
       On.EntityStates.VoidRaidCrab.DeathState.OnExit += DeathState_OnExit;
+    }
+
+    private void AddContent()
+    {
+      ContentAddition.AddEntityState<BetterCollapse>(out _);
+      ContentAddition.AddEntityState<BetterReEmerge>(out _);
+      ContentAddition.AddEntityState<BetterSpawnState>(out _);
     }
 
     private void CharacterMaster_OnBodyStart(On.RoR2.CharacterMaster.orig_OnBodyStart orig, CharacterMaster self, CharacterBody body)

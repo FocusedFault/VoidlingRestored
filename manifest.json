@@ -1,10 +1,7 @@
 ﻿{
   "name": "VoidlingRestored",
   "version_number": "1.0.0",
-  "website_url": "",
+  "website_url": "https://glitch.com/~voidling-restored",
   "description": "A restoration of the original voidling",
-  "dependencies": [
-    "bbepis-BepInExPack-5.4.2111",
-    "RiskofThunder-HookGenPatcher-1.2.3"
-  ]
+  "dependencies": ["RiskofThunder-R2API_ContentManagement-1.0.2"]
 }
