@@ -22,8 +22,6 @@ namespace VoidlingRestored
 
     public void Awake()
     {
-      // Charge gauntlet first Charge gauntlet again, 
-      // Does abilities on pips
       voidling.GetComponent<ModelLocator>().modelTransform.gameObject.AddComponent<PrintController>();
       On.RoR2.Stage.Start += Stage_Start;
       On.EntityStates.VoidRaidCrab.SpawnState.OnEnter += VoidRaidCrab_SpawnState;
@@ -32,6 +30,39 @@ namespace VoidlingRestored
       On.EntityStates.VoidRaidCrab.ChargeGauntlet.OnEnter += ChargeGauntlet_OnEnter;
       On.EntityStates.VoidRaidCrab.ChargeWardWipe.OnEnter += ChargeWardWipe_OnEnter;
       On.EntityStates.VoidRaidCrab.ChargeFinalStand.OnEnter += ChargeFinalStand_OnEnter;
+      On.EntityStates.VoidRaidCrab.DeathState.OnEnter += DeathState_OnEnter;
+      On.EntityStates.VoidRaidCrab.DeathState.OnExit += DeathState_OnExit;
+    }
+
+    private void DeathState_OnEnter(On.EntityStates.VoidRaidCrab.DeathState.orig_OnEnter orig, DeathState self)
+    {
+      // Body TrueDeath TrueDeath.playbackRate 5
+      self.animationStateName = "ChargeWipe";
+      self.animationPlaybackRateParam = "Wipe.playbackRate";
+      self.addPrintController = false;
+      orig(self);
+      PrintController printController = self.modelTransform.gameObject.AddComponent<PrintController>();
+      printController.printTime = self.printDuration;
+      printController.enabled = true;
+      printController.startingPrintHeight = 200f;
+      printController.maxPrintHeight = 500f;
+      printController.startingPrintBias = self.startingPrintBias;
+      printController.maxPrintBias = self.maxPrintBias;
+      printController.disableWhenFinished = false;
+      printController.printCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 1f, 1f);
+    }
+
+    private void DeathState_OnExit(On.EntityStates.VoidRaidCrab.DeathState.orig_OnExit orig, DeathState self)
+    {
+      orig(self);
+      GameObject[] joints = GameObject.FindObjectsOfType<GameObject>().Where(go => go.name == "VoidRaidCrabJointBody(Clone)" || go.name == "VoidRaidCrabJointMaster(Clone)").ToArray();
+      foreach (GameObject joint in joints)
+      {
+        if (NetworkServer.active)
+          NetworkServer.Destroy(joint);
+        else
+          Destroy(joint);
+      }
     }
 
     private void ChargeGauntlet_OnEnter(On.EntityStates.VoidRaidCrab.ChargeGauntlet.orig_OnEnter orig, ChargeGauntlet self)
