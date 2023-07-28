@@ -1,6 +1,6 @@
 # Voidling Restored
 
-Current bugs: encounter doesnt end after death, reviving with a dios causes HP pips to disappear
+Current bugs: rotation resets occasionally
 
 ## Changelog
 
