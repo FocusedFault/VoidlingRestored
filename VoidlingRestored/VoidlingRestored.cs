@@ -1,7 +1,6 @@
 using BepInEx;
 using RoR2;
 using RoR2.VoidRaidCrab;
-using RoR2.Projectile;
 using EntityStates.VoidRaidCrab;
 using System.Linq;
 using UnityEngine;
@@ -38,6 +37,7 @@ namespace VoidlingRestored
       On.EntityStates.VoidRaidCrab.DeathState.OnEnter += DeathState_OnEnter;
       On.EntityStates.VoidRaidCrab.DeathState.OnExit += DeathState_OnExit;
     }
+
     private void CharacterMaster_OnBodyStart(On.RoR2.CharacterMaster.orig_OnBodyStart orig, CharacterMaster self, CharacterBody body)
     {
       orig(self, body);

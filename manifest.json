@@ -1,8 +1,8 @@
 ﻿{
-  "name": "FathomlessVoidling",
+  "name": "VoidlingRestored",
   "version_number": "1.0.0",
   "website_url": "",
-  "description": "Template",
+  "description": "A restoration of the original voidling",
   "dependencies": [
     "bbepis-BepInExPack-5.4.2111",
     "RiskofThunder-HookGenPatcher-1.2.3"

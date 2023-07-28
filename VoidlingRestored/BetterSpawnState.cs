@@ -78,7 +78,7 @@ namespace VoidlingRestored
       base.FixedUpdate();
       if ((double)this.fixedAge >= (double)this.delay && !playedAnim)
       {
-        TeleportHelper.TeleportBody(this.characterBody, new Vector3(0, 0, 0));
+        TeleportHelper.TeleportBody(this.characterBody, new Vector3(0, -2, 0));
         this.PlayAnimation(this.animationLayerName, this.animationStateName, this.animationPlaybackRateParam, this.duration);
         this.playedAnim = true;
         --this.characterModel.invisibilityCount;
