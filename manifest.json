@@ -1,7 +1,7 @@
 ﻿{
   "name": "VoidlingRestored",
   "version_number": "1.0.0",
-  "website_url": "https://glitch.com/~voidling-restored",
+  "website_url": "https://github.com/FocusedFault/VoidlingRestored",
   "description": "A restoration of the original voidling",
   "dependencies": ["RiskofThunder-R2API_ContentManagement-1.0.2"]
 }
